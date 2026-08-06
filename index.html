@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexa | Personal Life Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Nexa navigation">
+        <a class="brand" href="#home" data-view-trigger="home" aria-label="Nexa home">
+          <span class="brand-mark">N</span>
+          <span>
+            <strong>Nexa</strong>
+            <small>Personal life dashboard</small>
+          </span>
+        </a>
+
+        <nav class="section-nav" aria-label="Dashboard sections">
+          <button class="nav-card" type="button" data-view-trigger="finance">
+            <span>
+              <strong>Finance</strong>
+              <small>Budgets, transactions, goals</small>
+            </span>
+            <span class="status-pill live">Open</span>
+          </button>
+
+          <button class="nav-card inactive" type="button" data-view-trigger="health">
+            <span>
+              <strong>Health</strong>
+              <small>Wellness tracking later</small>
+            </span>
+            <span class="status-pill">Coming Soon</span>
+          </button>
+
+          <button class="nav-card inactive" type="button" data-view-trigger="routines">
+            <span>
+              <strong>Routines</strong>
+              <small>Habits and rituals later</small>
+            </span>
+            <span class="status-pill">Coming Soon</span>
+          </button>
+
+          <button class="nav-card inactive" type="button" data-view-trigger="tasks">
+            <span>
+              <strong>Tasks</strong>
+              <small>Plans and to-dos later</small>
+            </span>
+            <span class="status-pill">Coming Soon</span>
+          </button>
+        </nav>
+      </aside>
+
+      <main class="main-content">
+        <section id="homeView" class="view home-view active" aria-labelledby="homeTitle">
+          <div class="hero-panel">
+            <p class="eyebrow">Static local skeleton</p>
+            <h1 id="homeTitle">Nexa keeps the big picture within reach.</h1>
+            <p class="lede">
+              Start with money, then grow into health, routines, and tasks without changing the foundation.
+            </p>
+          </div>
+
+          <section class="quote-slider" aria-label="Rotating quote" aria-live="polite">
+            <p id="quoteText" class="quote-text"></p>
+            <p id="quoteAuthor" class="quote-author"></p>
+          </section>
+        </section>
+
+        <section id="financeView" class="view workspace-view" aria-labelledby="financeTitle">
+          <header class="workspace-header">
+            <div>
+              <p class="eyebrow">Finance</p>
+              <h2 id="financeTitle">Finance dashboard</h2>
+            </div>
+            <button class="secondary-action" type="button" data-view-trigger="home">Back Home</button>
+          </header>
+
+          <div class="tab-list" role="tablist" aria-label="Finance sections">
+            <button id="budgetTab" class="tab-button active" type="button" role="tab" aria-selected="true" aria-controls="budgetPanel" data-tab-trigger="budget">
+              Budget Overview
+            </button>
+            <button id="transactionsTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="transactionsPanel" data-tab-trigger="transactions">
+              Daily Transactions
+            </button>
+            <button id="calendarTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="calendarPanel" data-tab-trigger="calendar">
+              Calendar
+            </button>
+            <button id="goalsTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="goalsPanel" data-tab-trigger="goals">
+              Annual Goals
+            </button>
+          </div>
+
+          <div class="tab-panels">
+            <section id="budgetPanel" class="tab-panel active" role="tabpanel" aria-labelledby="budgetTab" data-tab-panel="budget">
+              <h3>Budget Overview</h3>
+              <p>Budget Overview coming soon.</p>
+            </section>
+            <section id="transactionsPanel" class="tab-panel" role="tabpanel" aria-labelledby="transactionsTab" data-tab-panel="transactions">
+              <h3>Daily Transactions</h3>
+              <p>Daily Transactions coming soon.</p>
+            </section>
+            <section id="calendarPanel" class="tab-panel" role="tabpanel" aria-labelledby="calendarTab" data-tab-panel="calendar">
+              <h3>Calendar</h3>
+              <p>Calendar coming soon.</p>
+            </section>
+            <section id="goalsPanel" class="tab-panel" role="tabpanel" aria-labelledby="goalsTab" data-tab-panel="goals">
+              <h3>Annual Goals</h3>
+              <p>Annual Goals coming soon.</p>
+            </section>
+          </div>
+        </section>
+
+        <section id="comingSoonView" class="view placeholder-view" aria-live="polite">
+          <p class="eyebrow">Coming Soon</p>
+          <h2 id="comingSoonTitle">This section is on the roadmap.</h2>
+          <p id="comingSoonCopy">Nexa will have space for this once the next module is ready.</p>
+          <button class="secondary-action" type="button" data-view-trigger="home">Back Home</button>
+        </section>
+      </main>
+    </div>
+
+    <script src="./src/js/app.js"></script>
+  </body>
+</html>
