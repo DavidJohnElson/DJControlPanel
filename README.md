@@ -25,4 +25,33 @@ Then visit:
 
 `http://localhost:5173`
 
-Firebase, authentication, database calls, SMS handling, and Telegram integrations are intentionally not included in this step.
+Firebase authentication and Telegram integrations are intentionally not included in this step.
+
+## SMS Webhook Function
+
+The `functions/` folder contains a Firebase Cloud Function called `receiveSmsWebhook`.
+It accepts an authenticated HTTP `POST` from iOS Shortcuts and stores raw SMS text in the
+Firestore collection `pending_transactions`.
+
+Before deploying, set the shared secret:
+
+```bash
+firebase functions:secrets:set SMS_WEBHOOK_AUTH_KEY
+```
+
+Deploy the function:
+
+```bash
+firebase deploy --only functions
+```
+
+Example request:
+
+```bash
+curl -X POST "https://REGION-PROJECT_ID.cloudfunctions.net/receiveSmsWebhook?auth_key=YOUR_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"message_text":"Sample bank SMS text"}'
+```
+
+Successful requests create a document with `message_text`, `received_at`, and `status: "pending"`.
+Requests without the correct `auth_key` are rejected.

@@ -1,0 +1,10 @@
+{
+  "name": "dj-control-panel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nexa personal life dashboard frontend.",
+  "scripts": {
+    "start": "python3 -m http.server 5173",
+    "check": "node --check src/js/app.js && node --check src/js/app-state.js && node --check src/js/finance.js"
+  }
+}
