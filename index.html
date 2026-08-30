@@ -79,6 +79,14 @@
           </header>
 
           <div class="tab-list" role="tablist" aria-label="Finance sections">
+            <label for="financeDropdown" class="visually-hidden">Choose finance section</label>
+            <select id="financeDropdown" class="tab-dropdown" aria-label="Finance sections dropdown">
+              <option value="budget">Budget Overview</option>
+              <option value="transactions">Daily Transactions</option>
+              <option value="calendar">Calendar</option>
+              <option value="goals">Annual Goals</option>
+            </select>
+
             <button id="budgetTab" class="tab-button active" type="button" role="tab" aria-selected="true" aria-controls="budgetPanel" data-tab-trigger="budget">
               Budget Overview
             </button>

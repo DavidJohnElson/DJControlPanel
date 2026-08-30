@@ -61,21 +61,36 @@ function showView(viewName) {
 
 // Finance tabs are local UI state only. No page reloads or data calls are needed here.
 function initFinanceTabs() {
-  document.querySelectorAll("[data-tab-trigger]").forEach((tab) => {
+  const tabButtons = document.querySelectorAll("[data-tab-trigger]");
+  const tabPanels = document.querySelectorAll("[data-tab-panel]");
+  const dropdown = document.querySelector("#financeDropdown");
+
+  function activateTab(selectedTab) {
+    tabButtons.forEach((button) => {
+      const isActive = button.dataset.tabTrigger === selectedTab;
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-selected", String(isActive));
+    });
+    tabPanels.forEach((panel) => {
+      panel.classList.toggle("active", panel.dataset.tabPanel === selectedTab);
+    });
+    if (dropdown) dropdown.value = selectedTab;
+  }
+
+  tabButtons.forEach((tab) => {
     tab.addEventListener("click", () => {
-      const selectedTab = tab.dataset.tabTrigger;
-
-      document.querySelectorAll("[data-tab-trigger]").forEach((button) => {
-        const isActive = button.dataset.tabTrigger === selectedTab;
-        button.classList.toggle("active", isActive);
-        button.setAttribute("aria-selected", String(isActive));
-      });
-
-      document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
-        panel.classList.toggle("active", panel.dataset.tabPanel === selectedTab);
-      });
+      activateTab(tab.dataset.tabTrigger);
     });
   });
+
+  if (dropdown) {
+    dropdown.addEventListener("change", (e) => {
+      activateTab(e.target.value);
+    });
+    // initialize dropdown to current active tab if present
+    const active = Array.from(tabButtons).find((b) => b.classList.contains("active"));
+    if (active) dropdown.value = active.dataset.tabTrigger;
+  }
 }
 
 // The landing page quote slider uses hardcoded local content for now.
