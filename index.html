@@ -78,37 +78,36 @@
             <button class="secondary-action" type="button" data-view-trigger="home">Back Home</button>
           </header>
 
+          <div class="finance-toolbar">
+            <label for="monthInput">Showing month <input id="monthInput" type="month" /></label>
+          </div>
+
           <div class="tab-list" role="tablist" aria-label="Finance sections">
-            <button id="budgetTab" class="tab-button active" type="button" role="tab" aria-selected="true" aria-controls="budgetPanel" data-tab-trigger="budget">
-              Budget Overview
-            </button>
-            <button id="transactionsTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="transactionsPanel" data-tab-trigger="transactions">
-              Daily Transactions
-            </button>
-            <button id="calendarTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="calendarPanel" data-tab-trigger="calendar">
-              Calendar
-            </button>
-            <button id="goalsTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="goalsPanel" data-tab-trigger="goals">
-              Annual Goals
-            </button>
+            <button id="budgetTab" class="tab-button active" type="button" role="tab" aria-selected="true" aria-controls="budgetPanel" data-tab-trigger="budget">Budget Overview</button>
+            <button id="transactionsTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="transactionsPanel" data-tab-trigger="transactions">Daily Transactions</button>
           </div>
 
           <div class="tab-panels">
             <section id="budgetPanel" class="tab-panel active" role="tabpanel" aria-labelledby="budgetTab" data-tab-panel="budget">
-              <h3>Budget Overview</h3>
-              <p>Budget Overview coming soon.</p>
+              <div class="panel-heading"><div><h3>Monthly budget</h3><p>One income amount compared with every expense in the selected month.</p></div></div>
+              <div class="budget-grid">
+                <div class="pie-wrap"><div id="budgetPie" class="budget-pie" role="img" aria-label="Income and expenses pie chart"></div><div id="pieLegend" class="pie-legend"></div></div>
+                <div id="budgetStats" class="budget-stats"></div>
+              </div>
+              <div class="form-grid two-col">
+                <form id="incomeForm" class="form-card"><div class="form-heading"><h3>Monthly income</h3><span class="form-note">Recurring</span></div><label>Income source <input id="incomeSource" required placeholder="Salary, freelance..." /></label><label>Monthly amount <input id="incomeAmount" class="amount-input" type="text" inputmode="decimal" required placeholder="0.00" /></label><button class="primary-action" type="submit">Add income</button><div id="incomeList" class="compact-list"></div></form>
+                <form id="emiForm" class="form-card"><div class="form-heading"><h3>Default EMIs</h3><span id="emiTotal" class="form-note"></span></div><label>Lender or name <input id="emiName" required placeholder="Mortgage, car loan..." /></label><label>Monthly amount <input id="emiAmount" class="amount-input" type="text" inputmode="decimal" required placeholder="0.00" /></label><button class="primary-action" type="submit">Add EMI</button><div id="emiList" class="compact-list"></div></form>
+              </div>
+              <div class="form-grid two-col">
+                <form id="categoryForm" class="form-card"><div class="form-heading"><h3>Expense categories</h3><span id="categoryCount" class="form-note"></span></div><label>Category name <input id="categoryName" required placeholder="Utilities, shopping..." /></label><button class="primary-action" type="submit">Add category</button><div id="categoryList" class="category-list"></div></form>
+                <div class="form-card"><div class="form-heading"><h3>Monthly calendar</h3><span class="form-note">Daily activity</span></div><div id="calendarHead" class="calendar-grid calendar-head"></div><div id="calendarGrid" class="calendar-grid"></div></div>
+              </div>
             </section>
+
             <section id="transactionsPanel" class="tab-panel" role="tabpanel" aria-labelledby="transactionsTab" data-tab-panel="transactions">
-              <h3>Daily Transactions</h3>
-              <p>Daily Transactions coming soon.</p>
-            </section>
-            <section id="calendarPanel" class="tab-panel" role="tabpanel" aria-labelledby="calendarTab" data-tab-panel="calendar">
-              <h3>Calendar</h3>
-              <p>Calendar coming soon.</p>
-            </section>
-            <section id="goalsPanel" class="tab-panel" role="tabpanel" aria-labelledby="goalsTab" data-tab-panel="goals">
-              <h3>Annual Goals</h3>
-              <p>Annual Goals coming soon.</p>
+              <div class="panel-heading"><div><h3>Daily transactions</h3><p>Enter and review every transaction for the selected month.</p></div><strong id="transactionTotal" class="panel-total"></strong></div>
+              <form id="transactionForm" class="transaction-form"><label>Date <input id="transactionDate" type="date" required /></label><label>Description <input id="transactionDescription" required placeholder="What was it?" /></label><label>Cost <input id="transactionAmount" class="amount-input" type="text" inputmode="decimal" required placeholder="0.00" /></label><label>Category <select id="transactionCategory" required></select></label><label>Mode <select id="transactionMode"><option>Cash</option><option>Debit card</option><option>Credit card</option><option>Bank transfer</option><option>Direct debit</option></select></label><label>Account <input id="transactionAccount" placeholder="Cash, current account..." /></label><label class="wide-field">Remarks <input id="transactionRemarks" placeholder="Optional note" /></label><button class="primary-action" type="submit">Add transaction</button></form>
+              <div class="table-scroll"><table><thead><tr><th>Date</th><th>Description</th><th>Cost</th><th>Category</th><th>Mode</th><th>Account</th><th>Remarks</th><th></th></tr></thead><tbody id="transactionTable"></tbody></table></div>
             </section>
           </div>
         </section>
