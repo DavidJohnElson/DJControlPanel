@@ -41,10 +41,24 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initNavigation() {
+  const navToggle = document.querySelector(".mobile-nav-toggle");
+  const sectionNav = document.querySelector("#sectionNav");
+
+  navToggle.addEventListener("click", () => {
+    const isOpen = sectionNav.classList.toggle("mobile-open");
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+    navToggle.querySelector("span:last-child").textContent = isOpen ? "-" : "+";
+  });
+
   document.querySelectorAll("[data-view-trigger]").forEach((trigger) => {
     trigger.addEventListener("click", (event) => {
       event.preventDefault();
       showView(trigger.dataset.viewTrigger);
+      if (sectionNav.classList.contains("mobile-open")) {
+        sectionNav.classList.remove("mobile-open");
+        navToggle.setAttribute("aria-expanded", "false");
+        navToggle.querySelector("span:last-child").textContent = "+";
+      }
     });
   });
 }
