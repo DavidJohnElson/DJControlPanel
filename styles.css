@@ -34,6 +34,10 @@ button {
   cursor: pointer;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 290px minmax(0, 1fr);
@@ -87,6 +91,22 @@ button {
 .section-nav {
   display: grid;
   gap: 12px;
+}
+
+.logout-button {
+  margin-top: auto;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: transparent;
+  color: rgba(251, 253, 251, 0.78);
+  font-weight: 800;
+  text-align: left;
+}
+
+.logout-button:hover {
+  border-color: rgba(216, 182, 80, 0.72);
+  color: #fbfdfb;
 }
 
 .nav-card {

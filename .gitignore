@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
+# Firebase local emulator data and logs
+.firebase/
+.firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Build and coverage output
+dist/
+build/
+coverage/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+
+# macOS and editor files
+.DS_Store

@@ -6,7 +6,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
+  signInWithCustomToken,
   signOut
 } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
 import {
@@ -47,8 +47,16 @@ export const firebaseService = {
     return onAuthStateChanged(auth, callback);
   },
 
-  login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+  async loginWithPassword(password) {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+
+    if (!response.ok) throw new Error("Invalid password");
+    const { token } = await response.json();
+    return signInWithCustomToken(auth, token);
   },
 
   signup(email, password) {

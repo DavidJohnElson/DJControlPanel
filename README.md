@@ -25,7 +25,33 @@ Then visit:
 
 `http://localhost:5173`
 
-Firebase authentication and Telegram integrations are intentionally not included in this step.
+## Password-only login
+
+The login form accepts only a password. The plaintext password is sent to the deployed
+`loginWithPassword` function over HTTPS, cleared from the form, and never stored. The
+backend stores only an scrypt hash in Firebase Secret Manager.
+
+Generate a hash locally. The prompt does not echo the password:
+
+```bash
+node functions/create-password-hash.js
+```
+
+Set the printed hash as a Firebase secret:
+
+```bash
+firebase functions:secrets:set DASHBOARD_PASSWORD_HASH
+```
+
+Paste the printed hash when Firebase prompts for its value, then deploy:
+
+```bash
+firebase deploy --only functions,hosting
+```
+
+Before deploying, replace the placeholder values in `src/js/firebase-config.js` with the
+Firebase web app configuration. These are public Firebase project identifiers; never put
+the dashboard password or its hash in that file or in the frontend `.env` file.
 
 ## SMS Webhook Function
 

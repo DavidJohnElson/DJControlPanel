@@ -1,6 +1,7 @@
 "use strict";
 
 const admin = require("firebase-admin");
+const crypto = require("crypto");
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 
@@ -8,6 +9,40 @@ admin.initializeApp();
 
 const db = admin.firestore();
 const smsWebhookAuthKey = defineSecret("SMS_WEBHOOK_AUTH_KEY");
+const dashboardPasswordHash = defineSecret("DASHBOARD_PASSWORD_HASH");
+
+exports.loginWithPassword = onRequest(
+  {
+    secrets: [dashboardPasswordHash],
+    region: "us-central1"
+  },
+  async (request, response) => {
+    response.set("Access-Control-Allow-Origin", "*");
+    response.set("Access-Control-Allow-Headers", "Content-Type");
+
+    if (request.method === "OPTIONS") {
+      response.status(204).send("");
+      return;
+    }
+
+    if (request.method !== "POST") {
+      response.set("Allow", "POST, OPTIONS");
+      response.status(405).json({ error: "Method not allowed. Use POST." });
+      return;
+    }
+
+    const password = request.body && request.body.password;
+    const expectedHash = dashboardPasswordHash.value();
+
+    if (typeof password !== "string" || !expectedHash || !verifyPassword(password, expectedHash)) {
+      response.status(401).json({ error: "Invalid credentials." });
+      return;
+    }
+
+    const token = await admin.auth().createCustomToken("password-only-user");
+    response.json({ token });
+  }
+);
 
 /**
  * HTTP webhook for SMS text forwarded by iOS Shortcuts.
@@ -72,4 +107,14 @@ function readMessageText(body) {
   }
 
   return body.message_text;
+}
+
+function verifyPassword(password, encodedHash) {
+  const [algorithm, salt, hash] = encodedHash.split("$");
+  if (algorithm !== "scrypt" || !salt || !hash) return false;
+
+  const expected = Buffer.from(hash, "hex");
+  if (!expected.length) return false;
+  const actual = crypto.scryptSync(password, salt, expected.length);
+  return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
 }
