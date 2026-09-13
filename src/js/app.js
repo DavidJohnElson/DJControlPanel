@@ -25,12 +25,14 @@ const comingSoonCopy = {
 
 let activeQuoteIndex = 0;
 const money = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 2 });
-const budgetState = {
+const storageKey = "nexa.finance.v1";
+const defaultBudgetState = {
   incomes: [],
   emis: [{ id: 1, name: "Mortgage", amount: 0 }],
   categories: ["Housing", "Groceries", "Transport", "Utilities", "Dining", "Entertainment"],
   transactions: []
 };
+const budgetState = loadBudgetState();
 
 // Keep each initializer focused so future modules can be added without rewiring the app.
 document.addEventListener("DOMContentLoaded", () => {
@@ -75,12 +77,14 @@ function initFinance() {
   document.querySelector("#incomeForm").addEventListener("submit", (event) => {
     event.preventDefault();
     budgetState.incomes.push({ id: Date.now(), source: value("incomeSource"), amount: number("incomeAmount") });
+    saveBudgetState();
     event.target.reset();
     renderFinance();
   });
   document.querySelector("#emiForm").addEventListener("submit", (event) => {
     event.preventDefault();
     budgetState.emis.push({ id: Date.now(), name: value("emiName"), amount: number("emiAmount") });
+    saveBudgetState();
     event.target.reset();
     renderFinance();
   });
@@ -88,12 +92,14 @@ function initFinance() {
     event.preventDefault();
     const name = value("categoryName");
     if (name && !budgetState.categories.includes(name)) budgetState.categories.push(name);
+    saveBudgetState();
     event.target.reset();
     renderFinance();
   });
   document.querySelector("#transactionForm").addEventListener("submit", (event) => {
     event.preventDefault();
     budgetState.transactions.push({ id: Date.now(), date: value("transactionDate"), description: value("transactionDescription"), amount: number("transactionAmount"), category: value("transactionCategory"), mode: value("transactionMode"), account: value("transactionAccount") || "-", remarks: value("transactionRemarks") || "-" });
+    saveBudgetState();
     event.target.reset();
     document.querySelector("#transactionDate").value = todayValue();
     renderFinance();
@@ -104,10 +110,17 @@ function initFinance() {
 function value(id) { return document.querySelector(`#${id}`).value.trim(); }
 function number(id) { return Number(document.querySelector(`#${id}`).value.replace(/,/g, "")) || 0; }
 function formatAmountInput(input) {
-  const digits = input.value.replace(/[^\d.]/g, "");
-  const [whole = "", decimal = ""] = digits.split(".");
+  const cleaned = input.value.replace(/[^\d.]/g, "");
+  if (!cleaned) {
+    input.value = "";
+    return;
+  }
+
+  const hasDecimal = cleaned.includes(".");
+  const [whole = "", ...decimalParts] = cleaned.split(".");
+  const decimal = decimalParts.join("").slice(0, 2);
   const formattedWhole = (whole || "0").replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  input.value = decimal.length ? `${formattedWhole}.${decimal.slice(0, 2)}` : formattedWhole;
+  input.value = hasDecimal ? `${formattedWhole}.${decimal}` : formattedWhole;
 }
 function normalizeAmountInput(input) {
   if (!input.value) return;
@@ -161,10 +174,47 @@ function renderCalendar(transactions) {
 
 function renderTransactions(transactions) {
   document.querySelector("#transactionTable").innerHTML = transactions.slice().sort((a, b) => b.date.localeCompare(a.date)).map((transaction) => `<tr><td>${transaction.date}</td><td>${escapeText(transaction.description)}</td><td>${money.format(transaction.amount)}</td><td>${escapeText(transaction.category)}</td><td>${escapeText(transaction.mode)}</td><td>${escapeText(transaction.account)}</td><td>${escapeText(transaction.remarks)}</td><td><button class="table-delete" data-delete-transaction="${transaction.id}" type="button">Delete</button></td></tr>`).join("") || `<tr><td colspan="8" class="empty-note">No transactions for this month.</td></tr>`;
-  document.querySelectorAll("[data-delete-transaction]").forEach((button) => button.addEventListener("click", () => { budgetState.transactions = budgetState.transactions.filter((transaction) => transaction.id !== Number(button.dataset.deleteTransaction)); renderFinance(); }));
+  document.querySelectorAll("[data-delete-transaction]").forEach((button) => button.addEventListener("click", () => {
+    budgetState.transactions = budgetState.transactions.filter((transaction) => transaction.id !== Number(button.dataset.deleteTransaction));
+    saveBudgetState();
+    renderFinance();
+  }));
 }
 
 function escapeText(text) { return String(text).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[character]); }
+
+function loadBudgetState() {
+  try {
+    const savedState = JSON.parse(window.localStorage.getItem(storageKey));
+    if (!savedState || typeof savedState !== "object") return cloneBudgetState(defaultBudgetState);
+
+    return {
+      incomes: Array.isArray(savedState.incomes) ? savedState.incomes : [],
+      emis: Array.isArray(savedState.emis) ? savedState.emis : cloneBudgetState(defaultBudgetState).emis,
+      categories: Array.isArray(savedState.categories) ? savedState.categories : cloneBudgetState(defaultBudgetState).categories,
+      transactions: Array.isArray(savedState.transactions) ? savedState.transactions : []
+    };
+  } catch (error) {
+    return cloneBudgetState(defaultBudgetState);
+  }
+}
+
+function saveBudgetState() {
+  try {
+    window.localStorage.setItem(storageKey, JSON.stringify(budgetState));
+  } catch (error) {
+    console.warn("Unable to save finance data locally.", error);
+  }
+}
+
+function cloneBudgetState(state) {
+  return {
+    incomes: state.incomes.map((entry) => ({ ...entry })),
+    emis: state.emis.map((entry) => ({ ...entry })),
+    categories: [...state.categories],
+    transactions: state.transactions.map((entry) => ({ ...entry }))
+  };
+}
 
 function showView(viewName) {
   const targetView = viewName === "finance" ? "financeView" : viewName === "home" ? "homeView" : "comingSoonView";
